@@ -1,0 +1,19 @@
+pokey:
+	9 target leds
+	9 target switches
+	1 tool detector (analog in)
+	1 wall error detector (analog in)
+	1 buzzer (pwm)
+	1 panel indicator led
+	1 production test button
+	1 production test led
+
+peggy:
+	6 optical pegs (analog in)
+	1 tool detector (analog in)
+	1 drop detector (analog in)
+	1 wall error detector (analog in)
+	1 buzzer (pwm)
+	1 panel indicator led
+	1 production test button
+	1 production test led
