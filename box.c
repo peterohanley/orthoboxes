@@ -288,16 +288,6 @@ void new_poke(struct poke_buffer *b, uint64_t stamp, uint8_t loc)
 	b->first_empty++;
 	b->first_empty %= POKE_BUFFER_SIZE;
 }
-void new_peg(struct peg_buffer *b, uint64_t stamp, uint8_t loc, uint8_t newst)
-{
-	if (b->occupancy >= PEG_BUFFER_SIZE) return;
-	b->stamps[b->first_empty] = stamp;
-	b->locs[b->first_empty] = loc;
-	b->newsts[b->first_empty] = newst;
-	b->occupancy++;
-	b->first_empty++;
-	b->first_empty %= PEG_BUFFER_SIZE;
-}
 void new_tool(struct tool_buffer *b, uint64_t stamp, uint8_t newst)
 {
 	if (b->occupancy >= TOOL_BUFFER_SIZE) return;
@@ -347,18 +337,6 @@ int extract_poke(struct poke_buffer *eb, uint8_t *buf, int buflen)
 	eb->occupancy--;
 	eb->first_real++;
 	eb->first_real %= POKE_BUFFER_SIZE;
-	return 0;
-}
-int extract_peg(struct peg_buffer *eb, uint8_t *buf, int buflen)
-{
-	if (buflen < (8 + 1 + 1) || !eb->occupancy) return -1;
-	
-	time_to_wire(eb->stamps[eb->first_real], buf);
-	buf[8] = eb->locs[eb->first_real];
-	buf[9] = eb->newsts[eb->first_real];
-	eb->occupancy--;
-	eb->first_real++;
-	eb->first_real %= PEG_BUFFER_SIZE;
 	return 0;
 }
 int extract_tool(struct tool_buffer *eb, uint8_t *buf, int buflen)

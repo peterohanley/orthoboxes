@@ -31,7 +31,11 @@ peg_tick(struct peg *p)
 			break;
 		case PEG_STATE_CAPPING:
 			if ((millis() - p->state_start) > PEG_DELAY) {
-				new_peg(&pegbuf, host_millis(), p->loc, PEG_MESSAGE_CAPPED);
+				//new_peg(&pegbuf, host_millis(), p->loc, PEG_MESSAGE_CAPPED);
+				//set values so that message will be sent elsewhere
+				peg_stamps[p->loc] = host_millis();
+				peg_msg_pending |= (1 << p->loc);
+				peg_msg_state |= (1 << p->loc);
 				p->state = PEG_STATE_CAPPED;
 				p->state_start = millis();
 			}
@@ -50,7 +54,10 @@ peg_tick(struct peg *p)
 			break;
 		case PEG_STATE_CLEARING:
 			if ((millis() - p->state_start) > PEG_DELAY) {
-				new_peg(&pegbuf, host_millis(), p->loc, PEG_MESSAGE_CLEAR);
+				//new_peg(&pegbuf, host_millis(), p->loc, PEG_MESSAGE_CLEAR);
+				peg_stamps[p->loc] = host_millis();
+				peg_msg_pending |= (1 << p->loc);
+				peg_msg_state &= ~(1 << p->loc);
 				p->state = PEG_STATE_CLEAR;
 				p->state_start = millis();
 			}
@@ -211,13 +218,17 @@ wait_to_start_act(void)
 	// this doesn't work because the pegs won't settle into "capped" for a while and the status is requested quite early. It does put the appropriate values into status though
 	handle_pegs();
 	uint16_t peg_status = 0;
-	for (int i = 0; i < PEG_COUNT; i++) {
-		if (pegs[i].state == PEG_STATE_CAPPED) {
+	
+	//works >>1 <<8 is ugly though
+	for (int i = 0; i < PEG_COUNT;i++,peg_status<<=1) {
+		if (pegs[PEG_COUNT-1-i].state == PEG_STATE_CAPPED) {
 			peg_status |= 1;
 		}
-		peg_status <<= 1;
 	}
+	
+	peg_status >>= 1;
 	peg_status <<= 8;
+	
 	status &= ~((uint32_t) 0x0000ff00);
 	status |= peg_status;
 	

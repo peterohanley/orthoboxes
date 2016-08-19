@@ -77,7 +77,6 @@ uint8_t lms_said_to_end;
 #define WALL_ERROR_BUFFER_SIZE 3
 #define DROP_ERROR_BUFFER_SIZE 2
 #define POKE_BUFFER_SIZE 3
-#define PEG_BUFFER_SIZE 6
 #define TOOL_BUFFER_SIZE 3
 #define EVENT_BUFFER_SIZE 3
 
@@ -96,12 +95,6 @@ struct poke_buffer {
 	uint8_t locs[POKE_BUFFER_SIZE];
 	RINGBUFFER_INNARDS;
 };
-struct peg_buffer {
-	uint64_t stamps[PEG_BUFFER_SIZE];
-	uint8_t locs[PEG_BUFFER_SIZE];
-	uint8_t newsts[PEG_BUFFER_SIZE];
-	RINGBUFFER_INNARDS;
-};
 struct tool_buffer {
 	uint64_t stamps[TOOL_BUFFER_SIZE];
 	uint8_t newsts[TOOL_BUFFER_SIZE];
@@ -116,19 +109,16 @@ struct event_buffer {
 struct wall_error_buffer werrbuf;
 struct drop_error_buffer derrbuf;
 struct poke_buffer pokebuf;
-struct peg_buffer pegbuf;
 struct tool_buffer toolbuf;
 struct event_buffer evtbuf;
 
 void new_wall_error(struct wall_error_buffer *we, uint64_t, ms_time_t);
 void new_drop_error(struct drop_error_buffer *de, uint64_t);
 void new_poke(struct poke_buffer *pb, uint64_t, uint8_t);
-void new_peg(struct peg_buffer *pb, uint64_t, uint8_t, uint8_t);
 void new_tool(struct tool_buffer *tb, uint64_t, uint8_t);
 void new_event(struct event_buffer *eb, uint64_t, uint8_t);
 int extract_wall_error(struct wall_error_buffer *eb, uint8_t *buf, int buflen);
 int extract_drop_error(struct drop_error_buffer *eb, uint8_t *buf, int buflen);
 int extract_poke(struct poke_buffer *eb, uint8_t *buf, int buflen);
-int extract_peg(struct peg_buffer *eb, uint8_t *buf, int buflen);
 int extract_tool(struct tool_buffer *eb, uint8_t *buf, int buflen);
 int extract_event(struct event_buffer *eb, uint8_t *buf, int buflen);

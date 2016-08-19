@@ -36,3 +36,11 @@ void
 write_peggy_thresholds(void);
 void
 read_peggy_thresholds(void);
+
+//TODO compile-time check that PEG_COUNT <= 8
+uint8_t peg_msg_state;
+uint8_t peg_msg_pending;
+TIME_t peg_stamps[PEG_COUNT];
+
+void
+set_peg_msg(uint8_t peg, uint8_t state);

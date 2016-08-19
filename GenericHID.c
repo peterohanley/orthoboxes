@@ -339,11 +339,24 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 			return true;
 		}
 		//send peg event on MSG_PEG_ID
-		if (pegbuf.occupancy && status_sent) {
-			extract_peg(&pegbuf, Data, MSG_PEG_SIZE);
-			*ReportID = MSG_PEG_ID;
-			*ReportSize = MSG_PEG_SIZE;
-			return true;
+		if (peg_msg_pending) {
+			for (int i = 0; i < PEG_COUNT; i++) {
+				uint8_t flag = (1<<i);
+				if (peg_msg_pending & flag) {
+					//stamp 8byte
+					time_to_wire(peg_stamps[i],Data);
+					//loc byte
+					Data[8] = i;
+					//newst byte
+					Data[9] = !!(peg_msg_state & flag);
+					peg_msg_pending &= ~flag;
+					*ReportID = MSG_PEG_ID;
+					*ReportSize = MSG_PEG_SIZE;
+					return true;
+				} else {
+					//continue,it will be a later one
+				}
+			}
 		}
 		//send wall_error report on MSG_WALL_ERROR_ID
 		if (werrbuf.occupancy) {
@@ -469,8 +482,9 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 			// Fixup the timestamps of the tool buffer because one was being put in early. Direct call is much less space than funtion call.
 			for (int i = 0; i < TOOL_BUFFER_SIZE;i++)
 				toolbuf.stamps[i] += oset;
-			for (int i = 0; i < PEG_BUFFER_SIZE;i++)
-				pegbuf.stamps[i] += oset;
+			
+			// Do not send initial messages, but rather use status for that information. Because any messages in the "buffer" will not be sent, do not bother updating the timestamps
+			peg_msg_pending = 0;
 		} else if (ReportID == 69) {
 			send_raw = !send_raw;
 		}
