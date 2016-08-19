@@ -238,7 +238,7 @@ box_tick(void)
 	if (cur_tool == WALL_ERROR_WRONG) {
 		//set part of status, thereby notifying lms
 		status |= BAD_TOOL_STATUS_F;
-	} else { 
+	} else {
 		status &= ~BAD_TOOL_STATUS_F;
 	}
 	
@@ -259,7 +259,7 @@ box_tick(void)
 	if (pending && (millis()-started) > TOOL_DELAY) {
 		pending = 0;
 		status &= ~((uint32_t)TOOL_STATE_FOOTPRINT << 1);
-		status |= cur_tool<<1;
+		status |= msg<<1;
 		new_tool(&toolbuf, host_started, last_msg_sent = msg);
 	}
 	//new_tool(&toolbuf, host_millis(), tool_was_in_slot=tool_in);
