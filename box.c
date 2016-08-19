@@ -8,6 +8,7 @@
 #define UNUSED(x) (void)x
 
 //FIXME write a generic debouncer and replace all current debouncers with it
+//TODO both boxes: don't care about errors after task completed
 uint32_t status;
 uint8_t tool_was_in_slot;
 #define BOX_TYPE_EEPROM_ADDR ((uint8_t*)13)

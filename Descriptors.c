@@ -36,6 +36,9 @@
  */
 
 #include "Descriptors.h"
+#include "Timer.h"
+#include "led.h"
+#include "box.h"
 
 #define STANDARD_INPUT_REPORT(rid,usg,byts) HID_RI_REPORT_ID(8,rid),\
 	HID_RI_USAGE(8, usg),\
@@ -161,6 +164,29 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
+//NOTE: THIS IS BAD. DO NOT ALLOW THIS TO PERSIST
+const USB_Descriptor_Device_t PROGMEM DeviceDescriptorPokey =
+{
+	.Header                 = {.Size = sizeof(USB_Descriptor_Device_t), .Type = DTYPE_Device},
+
+	.USBSpecification       = VERSION_BCD(1,1,0),
+	.Class                  = USB_CSCP_NoDeviceClass,
+	.SubClass               = USB_CSCP_NoDeviceSubclass,
+	.Protocol               = USB_CSCP_NoDeviceProtocol,
+
+	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
+
+	.VendorID               = 0x03EB,
+	.ProductID              = 0x2041,
+	.ReleaseNumber          = VERSION_BCD(0,0,1),
+
+	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
+	.ProductStrIndex        = STRING_ID_Product,
+	.SerialNumStrIndex      = NO_DESCRIPTOR,
+
+	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
+};
+
 /** Configuration descriptor structure. This descriptor, located in FLASH memory, describes the usage
  *  of the device in one of its supported configurations, including information about any device interfaces
  *  and endpoints. The descriptor is read out by the USB host during the enumeration process when selecting
@@ -258,7 +284,11 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	switch (DescriptorType)
 	{
 		case DTYPE_Device:
-			Address = &DeviceDescriptor;
+			if (box_type == BOX_TYPE_POKEY) {
+				Address = &DeviceDescriptorPokey;
+			} else {
+				Address = &DeviceDescriptor;
+			}
 			Size    = sizeof(USB_Descriptor_Device_t);
 			break;
 		case DTYPE_Configuration:

@@ -130,6 +130,7 @@ int main(void)
 	box_init();
 	adc_task();
 	
+	//TODO exactly how early can we do this? Definitely after ADC.
 	box_type = determine_box_type();
 	if (box_type == BOX_TYPE_PEGGY) {
 		peggy_hardware();
