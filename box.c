@@ -227,6 +227,7 @@ classify_tool(int tool_error, int tool_jack)
 }
 
 #define TOOL_DELAY 200
+#define TOOL_STATE_FOOTPRINT 3
 void
 box_tick(void)
 {
@@ -257,6 +258,8 @@ box_tick(void)
 	
 	if (pending && (millis()-started) > TOOL_DELAY) {
 		pending = 0;
+		status &= ~((uint32_t)TOOL_STATE_FOOTPRINT << 1);
+		status |= cur_tool<<1;
 		new_tool(&toolbuf, host_started, last_msg_sent = msg);
 	}
 	//new_tool(&toolbuf, host_millis(), tool_was_in_slot=tool_in);
