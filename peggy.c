@@ -220,11 +220,9 @@ wait_to_start_act(void)
 	uint16_t peg_status = 0;
 	
 	//works >>1 <<8 is ugly though
-	for (int i = 0; i < PEG_COUNT;i++,peg_status<<=1) {
-		if (pegs[PEG_COUNT-1-i].state == PEG_STATE_CAPPED) {
+	for (int i = 0; i < PEG_COUNT;i++,peg_status<<=1)
+		if (pegs[PEG_COUNT-1-i].state == PEG_STATE_CAPPED)
 			peg_status |= 1;
-		}
-	}
 	
 	peg_status >>= 1;
 	peg_status <<= 8;
