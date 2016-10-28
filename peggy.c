@@ -104,6 +104,13 @@ write_peggy_thresholds(void)
 		eeprom_update_word(peg_eep_start+i, pegs[i].thresh);
 }
 
+void
+self_calibrate_peggy_thresholds(void)
+{
+	// TODO self calibrate. not as easy as it sounds because we need to measure each sensor with both peg and open to get a good threshold (probably just the center of those two measurements) so this function needs to interact with a user. Fortunately it only needs to interact with a knowledgeable user.
+	// A likely workflow: device determines all values for open pegs, then detects big changes when someone covers a peg. It makes a changing tone/rate of beeping to indicate that it is time to move to the next
+}
+
 int
 play_stage_success(int x)
 {

@@ -197,6 +197,7 @@ void check_pieces(void)
 				start_flashing(&buzzer_as_led, 10, 50, 50);
 			//update which organ is the current organ
 			target_in_play++;
+			if (target_in_play == 10) break; // Don't go through again if we're done. This fixes the issue where top back light would turn on.
 		} else {
 			t->led->on();
 		}

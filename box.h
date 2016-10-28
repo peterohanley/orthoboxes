@@ -37,6 +37,8 @@ tool_state cur_tool;
 int
 tool_in_slot(void);
 
+//how long must an error be to count as an error against the student?
+uint16_t wall_error_timeout;
 void
 handle_wall_errors(void);
 void

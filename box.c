@@ -153,6 +153,7 @@ box_init(void)
 	*/
 }
 
+uint16_t wall_error_timeout = 350;
 int error;
 uint8_t error_end_recorded;
 ms_time_t last_err_time, err_early_end_time;
@@ -188,7 +189,8 @@ handle_wall_errors(void)
 		error = 0;
 		error_end_recorded = 0;
 		//store error report in buffer
-		new_wall_error(&werrbuf, host_err_time, elapsed);
+		if (elapsed >= wall_error_timeout)
+			new_wall_error(&werrbuf, host_err_time, elapsed);
 	}
 }
 void

@@ -13,6 +13,11 @@ void uint32_to_wire(uint32_t v, uint8_t w[])
 		w[i] = ubv.u8s[3-i];
 	}
 }
+void uint16_to_wire(uint16_t v, uint8_t w[])
+{
+	w[0] = v>>8;
+	w[1] = v&0xff;
+}
 union float_byteview {
 	float val;
 	uint8_t u8s[4];
