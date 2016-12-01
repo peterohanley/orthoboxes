@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <avr/io.h>
 #include "Timer.h"
 #include "box.h"
@@ -73,6 +74,19 @@ read_buttons(void)
 		set_muxer(i+1);
 		button_values[i] = !!(PINB & (1<<PB4));
 	}
+}
+
+//fisher yates
+void
+shuffle(uint8_t *arr, int n) {
+  uint8_t i, j, tmp;
+
+  for (i = n - 1; i > 0; i--) {
+    j = rand() % (i + 1); // don't care about bias
+    tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
 }
 
 //need some buttons to be connected to leds
@@ -168,7 +182,11 @@ void check_pieces(void)
 	}
 	
 	while (!order_chosen) {
-		// this was causing the crashes fisher_yates(organ_order, SENSOR_NUM);
+		if (shuffle_order) {
+			//TODO test that this works, put in logic to seed rng, 
+			shuffle(target_order, TARGET_COUNT);
+			shuffle_order = 0;
+		}
 		target_in_play = 0;
 		order_chosen = 1;
 	}

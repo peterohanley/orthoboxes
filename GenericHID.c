@@ -461,12 +461,21 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 			Data+=8;
 			wall_error_timeout = Data[0]<<8 | Data[1];
 			Data+=2;
+			int allmax = 1;
 			//check that these are actually 0-9
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 10; i++) {
+				allmax = allmax && Data[i] == 0xff;
 				if (Data[i] > 9)
 					Data[i] = 0;
+			}
 			// If you send the same target twice in a row, it only counts as one because the second is completed in the same press. Not a bug.
-			memcpy(target_order,Data, 10);
+			if (allmax) {
+				// so that random generator will work, and easier than seeding off of an ADC line
+				srand(millis());
+				shuffle_order = 1;
+			} else {
+				memcpy(target_order,Data, 10);
+			}
 		} else if (ReportID == 71) {
 			//update peg thresholds in eeprom
 			//hard 6 because it doesn't magically update if I change the number of pegs

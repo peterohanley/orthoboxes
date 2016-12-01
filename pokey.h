@@ -33,6 +33,7 @@ struct target {
 	int loc;
 };
 
+uint8_t shuffle_order;
 uint8_t target_order[10];
 struct int_buffer {
 	int buf[MAX_LEDS_ON_AT_ONCE];
